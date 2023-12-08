@@ -1,0 +1,104 @@
+name: Main branch CI/CD
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    -
+      name: Checkout
+      uses: actions/checkout@v4
+
+    -
+      name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: "adopt"
+
+    -
+      name: Setup Gradle and caching
+      uses: gradle/gradle-build-action@v2
+
+    -
+      name: Gradle build
+      run: |
+        ./gradlew clean build
+
+    -
+      name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    -
+      name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    -
+      name: Docker build and push
+      uses: docker/build-push-action@v5
+      with:
+        file: Develop.Dockerfile
+        context: .
+        push: true
+        tags: duhanmo/dev-i5j5-api:latest
+    -
+      name: Create secret to file into runner server
+      run: echo "${{ secrets.APPLICATION_DEVELOP_PROPERTIES }}" > ./application-develop.properties
+
+    -
+      name: Send properties file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST_DEVELOP }}
+        username: ${{ secrets.SSH_USERNAME_DEVELOP }}
+        # NCP는 password로 접속
+        password: ${{ secrets.SSH_PASSWORD_DEVELOP }}
+        port: ${{ secrets.SSH_PORT_DEVELOP }}
+        # 깃허브 러너 환경에 존재하는 파일
+        source: "./application-develop.properties"
+        # 서버 내부 해당 디렉터리가 존재해야함
+        target: "/root/secret"
+
+    -
+      name: Send docker-compose.api.yml to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST_DEVELOP }}
+        username: ${{ secrets.SSH_USERNAME_DEVELOP }}
+        password: ${{ secrets.SSH_PASSWORD_DEVELOP }}
+        port: ${{ secrets.SSH_PORT_DEVELOP }}
+        source: "./docker/docker-compose.api.yml"
+        target: "/root"
+    -
+      name: Send deploy file to server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST_DEVELOP }}
+        username: ${{ secrets.SSH_USERNAME_DEVELOP }}
+        password: ${{ secrets.SSH_PASSWORD_DEVELOP }}
+        port: ${{ secrets.SSH_PORT_DEVELOP }}
+        source: "./script/deploy.sh"
+        target: "/root"
+
+    -
+      name: Execute docker pull and deploy.sh
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST_DEVELOP }}
+        username: ${{ secrets.SSH_USERNAME_DEVELOP }}
+        password: ${{ secrets.SSH_PASSWORD_DEVELOP }}
+        port: ${{ secrets.SSH_PORT_DEVELOP }}
+        script: |
+          sudo docker pull duhanmo/dev-i5j5-api:latest
+          chmod 777 /root/script/deploy.sh
+          /root/script/deploy.sh
+          docker image prune -f
