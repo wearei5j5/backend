@@ -1,11 +1,11 @@
-package org.dev.i5j5
+package org.dev.otte
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class I5j5Application
+class OtteApplication
 
 fun main(args: Array<String>) {
-    runApplication<I5j5Application>(*args)
+    runApplication<OtteApplication>(*args)
 }

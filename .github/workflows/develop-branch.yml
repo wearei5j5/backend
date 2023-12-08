@@ -49,7 +49,7 @@ jobs:
         file: Develop.Dockerfile
         context: .
         push: true
-        tags: duhanmo/dev-i5j5-api:latest
+        tags: duhanmo/dev-otte-api:latest
     -
       name: Create secret to file into runner server
       run: echo "${{ secrets.APPLICATION_DEVELOP_PROPERTIES }}" > ./application-develop.properties
@@ -98,7 +98,7 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD_DEVELOP }}
         port: ${{ secrets.SSH_PORT_DEVELOP }}
         script: |
-          sudo docker pull duhanmo/dev-i5j5-api:latest
+          sudo docker pull duhanmo/dev-otte-api:latest
           chmod 777 /root/script/deploy.sh
           /root/script/deploy.sh
           docker image prune -f

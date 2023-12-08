@@ -1,4 +1,4 @@
-package org.dev.i5j5
+package org.dev.otte
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class I5j5ApplicationTests {
+class OtteApplicationTests {
 
     @Test
     fun contextLoads() {

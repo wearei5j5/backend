@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   blue:
-    image: duhanmo/dev-i5j5-api:latest
+    image: duhanmo/dev-otte-api:latest
     container_name: blue
     restart: always
     ports:
@@ -11,7 +11,7 @@ services:
     environment:
       TZ: "Asia/Seoul"
   green:
-    image: duhanmo/dev-i5j5-api:latest
+    image: duhanmo/dev-otte-api:latest
     container_name: green
     restart: always
     ports:
