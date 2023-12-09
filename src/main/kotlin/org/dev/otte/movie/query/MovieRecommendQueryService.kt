@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class MovieRecommendQueryService(
-    private val client: ClovaStudioMovieRecommendClient,
+    private val clovaStudioMovieRecommendClient: ClovaStudioMovieRecommendClient,
     private val clovaStudioEngineSettingDao: ClovaStudioEngineSettingDao
 ) {
     fun recommend(ott: String, feeling: String, situation: String): MovieRecommendQueryResponse {
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
         val movieRecommendRequest = engineSetting.toRequest(ott, feeling, situation)
-        val rawRecommendResult = client.fetchMovieRecommend(movieRecommendRequest).result.outputText
+        val rawRecommendResult =
+            clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
         return parseMovieRecommendationString(rawRecommendResult)
             ?: throw IllegalArgumentException("i5j5 does not operate normally.")
     }
