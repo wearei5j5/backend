@@ -14,7 +14,7 @@ class MovieRecommendQueryService(
     private val clovaStudioEngineSettingDao: ClovaStudioEngineSettingDao,
     private val tmdbMovieSearchClient: TmdbMovieSearchClient
 ) {
-    fun recommend(ott: String, feeling: String, situation: String): MovieRecommendQueryResponse {
+    fun recommend(ottList: List<String>, feeling: String, situation: String): List<MovieRecommendQueryResponse> {
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
         val movieRecommendRequest = engineSetting.toRequest(ott, feeling, situation)
         val rawRecommendResult =
