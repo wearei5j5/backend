@@ -19,9 +19,9 @@ class MovieRestController(
 ) {
     @GetMapping("/recommended")
     @Operation(summary = "Find Recommended Movie")
-    fun recommend(request: MovieRecommendRequest): ResponseEntity<DataResult<MovieRecommendQueryResponse>> {
+    fun recommend(request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
         val response = movieRecommendQueryService.recommend(
-            ott = request.ott, feeling = request.feeling, situation = request.situation
+            ottList = request.ottList, feeling = request.feeling, situation = request.situation
         )
         return ResponseEntity.ok(DataResult(response))
     }

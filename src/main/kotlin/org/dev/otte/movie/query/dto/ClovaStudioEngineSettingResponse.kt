@@ -30,9 +30,9 @@ data class ClovaStudioEngineSettingResponse(
         engineSetting.includeAiFilters,
     )
 
-    fun toRequest(ott: String, feeling: String, situation: String): ClovaStudioMovieRecommendRequest {
+    fun toRequest(ottList: String, feeling: String, situation: String): ClovaStudioMovieRecommendRequest {
         val condition = """
-            OTT: $ott
+            OTT목록: $ottList
             기분: $feeling
             상황: $situation
         """.trimIndent()
