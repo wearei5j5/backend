@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.GetExchange
 
 interface TmdbApiClient {
-    @GetExchange("https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1")
+    @GetExchange("https://api.themoviedb.org/3/search/movie?include_adult=false&language=ko&page=1")
     fun searchMovie(
         @RequestHeader(name = HttpHeaders.AUTHORIZATION) accessToken: String,
         @RequestParam(name = "query") movieName: String
