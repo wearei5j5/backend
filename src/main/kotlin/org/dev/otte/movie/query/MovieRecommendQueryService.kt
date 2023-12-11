@@ -47,7 +47,7 @@ class MovieRecommendQueryService(
         val lines = input.lines()
         val movieName = lines.firstOrNull { it.startsWith("영화:") }?.substringAfter(":")?.trim()
         val keywordLine = lines.firstOrNull { it.startsWith("키워드:") }?.substringAfter(":")?.trim() ?: ""
-        val keywords = keywordLine.split(",").map { it.trim() }
+        val keywords = keywordLine.split(",").map { it.trim() }.map { "#$it" }
 
         if (movieName == null) {
             return null
