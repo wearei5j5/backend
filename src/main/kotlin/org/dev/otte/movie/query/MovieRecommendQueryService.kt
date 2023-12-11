@@ -1,19 +1,24 @@
 package org.dev.otte.movie.query
 
+import org.dev.otte.movie.command.domain.MovieRecommendedEvent
 import org.dev.otte.movie.infra.clova.client.ClovaStudioMovieRecommendClient
 import org.dev.otte.movie.infra.clova.dto.ClovaStudioMovieRecommendRequest
 import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 private const val TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
 @Service
+@Transactional(readOnly = true)
 class MovieRecommendQueryService(
     private val clovaStudioMovieRecommendClient: ClovaStudioMovieRecommendClient,
     private val clovaStudioEngineSettingDao: ClovaStudioEngineSettingDao,
-    private val tmdbMovieSearchClient: TmdbMovieSearchClient
+    private val tmdbMovieSearchClient: TmdbMovieSearchClient,
+    private val publisher: ApplicationEventPublisher
 ) {
     fun recommend(ottList: List<String>, feeling: String, situation: String): List<MovieRecommendQueryResponse> {
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
@@ -27,11 +32,11 @@ class MovieRecommendQueryService(
             if (!movieNameSet.contains(movieRecommendQueryResponse.movieName)) {
                 movieNameSet.add(movieRecommendQueryResponse.movieName)
                 movieRecommendQueryResponseList.add(movieRecommendQueryResponse)
+                publisher.publishEvent(MovieRecommendedEvent(movieRecommendQueryResponse))
             }
         }
 
         return movieRecommendQueryResponseList.toList()
-
     }
 
     private fun movieRecommendQueryResponse(movieRecommendRequest: ClovaStudioMovieRecommendRequest): MovieRecommendQueryResponse {

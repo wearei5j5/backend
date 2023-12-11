@@ -1,7 +1,7 @@
 package org.dev.otte.user.command.domain
 
 import jakarta.persistence.*
-import jakarta.persistence.GenerationType.IDENTITY
+import org.dev.otte.common.domain.BaseEntity
 
 @Entity
 @Table(name = "refresh_token")
@@ -12,8 +12,4 @@ class RefreshToken(
 
     @Column
     val jwt: String
-) {
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    val id: Long = 0L
-}
+) : BaseEntity()

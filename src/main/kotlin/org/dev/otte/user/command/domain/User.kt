@@ -1,7 +1,11 @@
 package org.dev.otte.user.command.domain
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Table
+import org.dev.otte.common.domain.BaseEntity
 import org.dev.otte.user.command.domain.UserState.VALID
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -15,8 +19,7 @@ class User(
     @Column
     @Enumerated(STRING)
     val socialProvider: SocialProvider,
-    id: Long = 0L
-) {
+) : BaseEntity() {
 
     @Column
     @Enumerated(STRING)
@@ -25,10 +28,6 @@ class User(
     @Column
     @Enumerated(STRING)
     val role: Role = Role.BASIC
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L
 
     val authorities: Collection<GrantedAuthority>
         get() = listOf(SimpleGrantedAuthority("ROLE_${role.name}"))

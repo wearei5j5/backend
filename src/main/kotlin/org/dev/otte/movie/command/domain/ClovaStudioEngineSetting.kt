@@ -5,10 +5,10 @@ import jakarta.persistence.GenerationType.IDENTITY
 import org.dev.otte.common.util.StringListConverter
 
 @Entity
+@Table(name = "clova_studio_engine_setting")
 class ClovaStudioEngineSetting(
-    @Column
-    @Lob
-    val text: String, // 프롬프트
+    @Column(length = 2000)
+    val text: String, // 프롬프트 + 질문
 
     @Column
     val start: String,

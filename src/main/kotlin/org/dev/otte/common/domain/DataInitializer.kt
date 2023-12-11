@@ -13,6 +13,13 @@ class DataInitializer(
     private val staticConfigRepository: StaticConfigRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String) {
+        if (clovaStudioEngineSettingRepository.findAll().isNotEmpty() &&
+            staticConfigRepository.findAll().isNotEmpty()
+        ) {
+            return
+        }
+        clovaStudioEngineSettingRepository.deleteAllInBatch()
+        staticConfigRepository.deleteAllInBatch()
         populateClovaStudioEngineSetting()
         populateStaticConfig()
     }
