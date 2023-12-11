@@ -25,6 +25,11 @@ repositories {
     mavenCentral()
 }
 
+object Version {
+    const val JJWT = "0.11.5"
+}
+
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -34,6 +39,12 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     runtimeOnly("com.h2database:h2")
+
+    implementation("io.jsonwebtoken:jjwt-api:${Version.JJWT}")
+    implementation("io.jsonwebtoken:jjwt-impl:${Version.JJWT}")
+    implementation("io.jsonwebtoken:jjwt-jackson:${Version.JJWT}")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
 }
 
 tasks.withType<KotlinCompile> {

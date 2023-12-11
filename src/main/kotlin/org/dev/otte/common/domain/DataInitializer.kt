@@ -9,9 +9,15 @@ import org.springframework.stereotype.Component
 @Profile("!product")
 @Component
 class DataInitializer(
-    private val clovaStudioEngineSettingRepository: ClovaStudioEngineSettingRepository
+    private val clovaStudioEngineSettingRepository: ClovaStudioEngineSettingRepository,
+    private val staticConfigRepository: StaticConfigRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String) {
+        populateClovaStudioEngineSetting()
+        populateStaticConfig()
+    }
+
+    private fun populateClovaStudioEngineSetting() {
         clovaStudioEngineSettingRepository.save(
             ClovaStudioEngineSetting(
                 text = getPrompt(),
@@ -27,6 +33,10 @@ class DataInitializer(
                 includeAiFilters = true
             )
         )
+    }
+
+    private fun populateStaticConfig() {
+        staticConfigRepository.save(StaticConfig("http://localhost:3000"))
     }
 
     private fun getPrompt() =

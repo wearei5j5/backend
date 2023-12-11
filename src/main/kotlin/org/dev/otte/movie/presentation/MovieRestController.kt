@@ -2,10 +2,11 @@ package org.dev.otte.movie.presentation
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.dev.otte.common.presentation.DataResult
+import org.dev.otte.common.presentation.dto.DataResult
 import org.dev.otte.movie.presentation.dto.MovieRecommendRequest
 import org.dev.otte.movie.query.MovieRecommendQueryService
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,7 +20,7 @@ class MovieRestController(
 ) {
     @GetMapping("/recommended")
     @Operation(summary = "Find Recommended Movie")
-    fun recommend(request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
+    fun recommend(@ParameterObject request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
         val response = movieRecommendQueryService.recommend(
             ottList = request.ottList, feeling = request.feeling, situation = request.situation
         )

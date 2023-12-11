@@ -6,7 +6,8 @@ import org.dev.otte.common.util.StringListConverter
 
 @Entity
 class ClovaStudioEngineSetting(
-    @Column(columnDefinition = "TEXT")
+    @Column
+    @Lob
     val text: String, // 프롬프트
 
     @Column
