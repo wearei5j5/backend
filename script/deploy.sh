@@ -5,7 +5,7 @@ IS_GREEN=$(docker ps | grep green) # 현재 실행중인 App이 green인지 확�
 
 DEFAULT_CONF="/etc/nginx/nginx.conf"
 
-cd ~/docker # /home/ec-user/docker 로 이동
+cd ~/docker # /root/docker 로 이동
 
 if [ -z "$IS_BLUE" ] && [ -z "$IS_GREEN" ]; then # blue, green 컨테이너 모두 실행중이 아닐 때
   echo "Neither blue nor green is running"
