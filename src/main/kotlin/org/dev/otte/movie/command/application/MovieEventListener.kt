@@ -1,7 +1,7 @@
 package org.dev.otte.movie.command.application
 
 import org.dev.otte.movie.command.domain.MovieRecommendedEvent
-import org.dev.otte.movie.command.domain.RecommendedMovie
+import org.dev.otte.movie.command.domain.RecommendedMovieLog
 import org.dev.otte.movie.command.domain.RecommendedMovieRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
@@ -16,7 +16,7 @@ class MovieEventListener(
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun listen(event: MovieRecommendedEvent) {
         recommendedMovieRepository.save(
-            RecommendedMovie(
+            RecommendedMovieLog(
                 event.movieRecommendQueryResponse.movieName,
                 event.movieRecommendQueryResponse.keywords,
                 event.movieRecommendQueryResponse.posterImageUrl

@@ -8,8 +8,8 @@ import org.dev.otte.common.domain.BaseRootEntity
 import org.dev.otte.common.util.StringListConverter
 
 @Entity
-@Table(name = "recommended_movie")
-class RecommendedMovie(
+@Table(name = "recommended_movie_log")
+class RecommendedMovieLog(
     @Column
     val movieName: String,
 
@@ -19,4 +19,4 @@ class RecommendedMovie(
 
     @Column
     val posterImageUrl: String?
-) : BaseRootEntity<RecommendedMovie>()
+) : BaseRootEntity<RecommendedMovieLog>()
