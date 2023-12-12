@@ -1,15 +1,22 @@
 package org.dev.otte.movie.command.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Convert
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
-import org.dev.otte.common.domain.BaseRootEntity
+import jakarta.persistence.*
+import org.dev.otte.chat.command.domain.Chat
+import org.dev.otte.common.domain.BaseEntity
 import org.dev.otte.common.util.StringListConverter
+import org.dev.otte.user.command.domain.User
 
 @Entity
 @Table(name = "recommended_movie")
 class RecommendedMovie(
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    val user: User,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
+    val chat: Chat,
+
     @Column
     val movieName: String,
 
@@ -19,4 +26,4 @@ class RecommendedMovie(
 
     @Column
     val posterImageUrl: String?
-) : BaseRootEntity<RecommendedMovie>()
+) : BaseEntity()
