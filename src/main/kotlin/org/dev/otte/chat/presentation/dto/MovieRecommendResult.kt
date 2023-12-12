@@ -1,6 +1,6 @@
 package org.dev.otte.chat.presentation.dto
 
-import org.dev.otte.chat.presentation.command.application.dto.MovieRecommendationCommand
+import org.dev.otte.chat.command.application.dto.MovieRecommendationCommand
 
 data class MovieRecommendResult(
     val movieName: String,

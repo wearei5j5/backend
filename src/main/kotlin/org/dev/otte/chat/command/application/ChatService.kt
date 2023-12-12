@@ -1,10 +1,10 @@
-package org.dev.otte.chat.presentation.command.application
+package org.dev.otte.chat.command.application
 
-import org.dev.otte.chat.presentation.command.application.dto.ChatSaveCommand
-import org.dev.otte.chat.presentation.command.domain.Chat
-import org.dev.otte.chat.presentation.command.domain.ChatRepository
-import org.dev.otte.chat.presentation.command.domain.ChatSentence
-import org.dev.otte.chat.presentation.command.domain.ChatSentenceRepository
+import org.dev.otte.chat.command.application.dto.ChatSaveCommand
+import org.dev.otte.chat.command.domain.Chat
+import org.dev.otte.chat.command.domain.ChatRepository
+import org.dev.otte.chat.command.domain.ChatSentence
+import org.dev.otte.chat.command.domain.ChatSentenceRepository
 import org.dev.otte.movie.command.domain.RecommendedMovie
 import org.dev.otte.movie.command.domain.RecommendedMovieRepository
 import org.dev.otte.user.command.domain.UserRepository
@@ -23,14 +23,16 @@ class ChatService(
     fun save(command: ChatSaveCommand) {
         val user = userRepository.getOrThrow(command.userId)
         val chat = chatRepository.save(Chat(user))
-        recommendedMovieRepository.save(
-            RecommendedMovie(
-                user,
-                chat,
-                command.movieRecommendationCommand.movieName,
-                command.movieRecommendationCommand.keywords,
-                command.movieRecommendationCommand.posterImageUrl
-            )
+        recommendedMovieRepository.saveAll(
+            command.movieRecommendationCommands.map {
+                RecommendedMovie(
+                    user,
+                    chat,
+                    it.movieName,
+                    it.keywords,
+                    it.posterImageUrl
+                )
+            }
         )
         chatSentenceRepository.saveAll(command.chat.map { ChatSentence(chat, it.speaker, it.sentence) })
     }

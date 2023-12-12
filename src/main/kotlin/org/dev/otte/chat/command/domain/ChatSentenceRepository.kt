@@ -1,4 +1,4 @@
-package org.dev.otte.chat.presentation.command.domain
+package org.dev.otte.chat.command.domain
 
 import org.springframework.data.jpa.repository.JpaRepository
 
