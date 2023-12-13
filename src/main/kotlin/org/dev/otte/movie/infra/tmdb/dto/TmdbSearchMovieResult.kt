@@ -10,5 +10,5 @@ data class TmdbSearchMovieResult(
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class MovieResult(
     val posterPath: String?,
-    val voteCount: Long?
+    val releaseDate: String?
 )

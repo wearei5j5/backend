@@ -21,7 +21,8 @@ class MovieService(
                 user,
                 command.movieName,
                 command.keywords,
-                command.posterImageUrl
+                command.posterImageUrl,
+                command.releaseDate
             )
         )
     }

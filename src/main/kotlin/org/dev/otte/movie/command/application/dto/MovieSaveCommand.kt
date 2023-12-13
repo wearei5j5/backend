@@ -4,5 +4,6 @@ data class MovieSaveCommand(
     val userId: Long,
     val movieName: String,
     val keywords: List<String>,
-    var posterImageUrl: String? = null
+    val posterImageUrl: String? = null,
+    val releaseDate: String? = null
 )

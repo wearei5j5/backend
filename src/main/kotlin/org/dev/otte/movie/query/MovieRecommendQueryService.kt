@@ -4,6 +4,7 @@ import org.dev.otte.movie.command.domain.MovieRecommendedEvent
 import org.dev.otte.movie.infra.clova.client.ClovaStudioMovieRecommendClient
 import org.dev.otte.movie.infra.clova.dto.ClovaStudioMovieRecommendRequest
 import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
+import org.dev.otte.movie.infra.tmdb.dto.MovieResult
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
 import org.springframework.context.ApplicationEventPublisher
@@ -27,7 +28,7 @@ class MovieRecommendQueryService(
         val movieNameSet = mutableSetOf<String>()
         val movieRecommendQueryResponseList: MutableList<MovieRecommendQueryResponse> = mutableListOf()
         while (movieNameSet.size < 3) {
-            Thread.sleep(1000)
+            Thread.sleep(500)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
             if (!movieNameSet.contains(movieRecommendQueryResponse.movieName)) {
                 movieNameSet.add(movieRecommendQueryResponse.movieName)
@@ -43,9 +44,12 @@ class MovieRecommendQueryService(
         val rawRecommendResult =
             clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
         val movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
-            ?.apply { posterImageUrl = getPosterImageUrl(movieName) }
             ?: throw IllegalArgumentException("i5j5 does not operate normally.")
-        return movieRecommendQueryResponse
+        val firstMovieInSearchResults = getFirstMovieInSearchResults(movieRecommendQueryResponse.movieName)
+        return movieRecommendQueryResponse.apply {
+            posterImageUrl = getPosterImageUrl(firstMovieInSearchResults?.posterPath)
+            releaseDate = firstMovieInSearchResults?.releaseDate
+        }
     }
 
     private fun parseMovieRecommendationString(input: String): MovieRecommendQueryResponse? {
@@ -60,8 +64,7 @@ class MovieRecommendQueryService(
         return MovieRecommendQueryResponse(movieName, keywords)
     }
 
-    private fun getPosterImageUrl(movieName: String): String? {
-        val posterPath = getMaxVotedMoviePosterPath(movieName)
+    private fun getPosterImageUrl(posterPath: String?): String? {
         return if (posterPath != null) {
             TMDB_POSTER_BASE_URL + posterPath
         } else {
@@ -69,11 +72,10 @@ class MovieRecommendQueryService(
         }
     }
 
-    private fun getMaxVotedMoviePosterPath(movieName: String): String? {
+    private fun getFirstMovieInSearchResults(movieName: String): MovieResult? {
         return tmdbMovieSearchClient.searchMovie(movieName)
             .results
             .firstOrNull()
-            ?.posterPath
     }
 }
 

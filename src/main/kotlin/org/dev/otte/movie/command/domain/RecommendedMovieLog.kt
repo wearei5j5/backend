@@ -18,5 +18,8 @@ class RecommendedMovieLog(
     val keywords: List<String>,
 
     @Column
-    val posterImageUrl: String?
+    val posterImageUrl: String?,
+
+    @Column
+    val releaseDate: String?
 ) : BaseRootEntity<RecommendedMovieLog>()

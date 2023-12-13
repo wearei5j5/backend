@@ -19,7 +19,8 @@ class MovieEventListener(
             RecommendedMovieLog(
                 event.movieRecommendQueryResponse.movieName,
                 event.movieRecommendQueryResponse.keywords,
-                event.movieRecommendQueryResponse.posterImageUrl
+                event.movieRecommendQueryResponse.posterImageUrl,
+                event.movieRecommendQueryResponse.releaseDate
             )
         )
     }

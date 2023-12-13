@@ -20,5 +20,8 @@ class Movie(
     val keywords: List<String>,
 
     @Column
-    val posterImageUrl: String?
+    val posterImageUrl: String?,
+
+    @Column
+    val releaseDate: String?
 ) : BaseEntity()
