@@ -6,6 +6,9 @@ import org.dev.otte.movie.infra.clova.dto.ClovaStudioMovieRecommendRequest
 import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
 import org.dev.otte.movie.infra.tmdb.dto.MovieResult
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
+import org.dev.otte.movie.query.dao.MovieQueryDao
+import org.dev.otte.movie.query.dto.MovieQueryResponse
+import org.dev.otte.movie.query.dto.MovieRecommendCondition
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -19,23 +22,47 @@ class MovieRecommendQueryService(
     private val clovaStudioMovieRecommendClient: ClovaStudioMovieRecommendClient,
     private val clovaStudioEngineSettingDao: ClovaStudioEngineSettingDao,
     private val tmdbMovieSearchClient: TmdbMovieSearchClient,
-    private val publisher: ApplicationEventPublisher
+    private val publisher: ApplicationEventPublisher,
+    private val movieQueryDao: MovieQueryDao
 ) {
-    fun recommend(ottList: List<String>, feeling: String, situation: String): List<MovieRecommendQueryResponse> {
+    fun recommend(
+        condition: MovieRecommendCondition
+    ): List<MovieRecommendQueryResponse> {
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
-        val movieRecommendRequest = engineSetting.toRequest(ottList.joinToString(","), feeling, situation)
+        val movieRecommendRequest =
+            engineSetting.toRequest(condition.ottList.joinToString(","), condition.feeling, condition.situation)
 
-        val movieNameSet = mutableSetOf<String>()
+        val removeWhitespaceMovieNameSet = mutableSetOf<String>()
         val movieRecommendQueryResponseList: MutableList<MovieRecommendQueryResponse> = mutableListOf()
-        while (movieNameSet.size < 3) {
+
+        var userMovies: List<MovieQueryResponse> = emptyList()
+
+        if (condition.userId != null) {
+            userMovies = movieQueryDao.findAll(condition.userId)
+        }
+
+        val removeWhitespaceUserMovieNames = userMovies.map { movie ->
+            movie.movieName.filterNot { name -> name.isWhitespace() }
+        }
+
+        while (removeWhitespaceMovieNameSet.size < 3) {
             Thread.sleep(500)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
-            if (!movieNameSet.contains(movieRecommendQueryResponse.movieName)) {
-                movieNameSet.add(movieRecommendQueryResponse.movieName)
+
+
+            val removeWhitespaceMovieName = movieRecommendQueryResponse.movieName.filterNot { it.isWhitespace() }
+
+
+            if (!removeWhitespaceMovieNameSet.contains(removeWhitespaceMovieName)) {
+                if (removeWhitespaceUserMovieNames.contains(removeWhitespaceMovieName)) {
+                    movieRecommendQueryResponse.isCollected = true
+                }
+                removeWhitespaceMovieNameSet.add(removeWhitespaceMovieName)
                 movieRecommendQueryResponseList.add(movieRecommendQueryResponse)
                 publisher.publishEvent(MovieRecommendedEvent(movieRecommendQueryResponse))
             }
         }
+
 
         return movieRecommendQueryResponseList.toList()
     }

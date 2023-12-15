@@ -6,5 +6,6 @@ data class MovieRecommendQueryResponse(
 ) {
     var posterImageUrl: String? = null
     var releaseDate: String? = null
+    var isCollected: Boolean = false
 }
 
