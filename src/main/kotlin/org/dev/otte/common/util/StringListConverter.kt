@@ -5,11 +5,17 @@ import jakarta.persistence.Converter
 
 @Converter
 class StringListConverter : AttributeConverter<List<String>, String> {
-    override fun convertToDatabaseColumn(attribute: List<String>): String {
+    override fun convertToDatabaseColumn(attribute: List<String>?): String {
+        if (attribute.isNullOrEmpty()) {
+            return ""
+        }
         return attribute.joinToString(",")
     }
 
-    override fun convertToEntityAttribute(dbData: String): List<String> {
+    override fun convertToEntityAttribute(dbData: String?): List<String> {
+        if (dbData.isNullOrEmpty()) {
+            return emptyList()
+        }
         return dbData.split(",")
     }
 }

@@ -1,4 +1,4 @@
-name: Main branch CI/CD
+name: Develop branch CI/CD
 
 on:
   push:

@@ -23,12 +23,15 @@ enum class Ott {
 
 @Converter
 class OttConverter : AttributeConverter<List<Ott>, String> {
-    override fun convertToDatabaseColumn(attribute: List<Ott>): String {
+    override fun convertToDatabaseColumn(attribute: List<Ott>?): String {
+        if (attribute.isNullOrEmpty()) {
+            return ""
+        }
         return attribute.joinToString(",") { it.name }
     }
 
-    override fun convertToEntityAttribute(dbData: String): List<Ott> {
-        if (dbData.isEmpty()) {
+    override fun convertToEntityAttribute(dbData: String?): List<Ott> {
+        if (dbData.isNullOrEmpty()) {
             return emptyList()
         }
         return dbData.split(",").map { Ott.of(it) }
