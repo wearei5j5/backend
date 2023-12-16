@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.dev.otte.common.presentation.dto.DataResult
 import org.dev.otte.common.security.AuthenticationFacade
 import org.dev.otte.movie.command.application.MovieService
+import org.dev.otte.movie.command.application.dto.MovieSaveCommandResponse
 import org.dev.otte.movie.presentation.dto.MovieRecommendRequest
 import org.dev.otte.movie.presentation.dto.MovieSaveRequest
 import org.dev.otte.movie.query.MovieQueryService
@@ -40,8 +41,18 @@ class MovieRestController(
     fun save(
         @AuthenticationPrincipal user: User,
         @RequestBody request: MovieSaveRequest
+    ): ResponseEntity<MovieSaveCommandResponse> {
+        return ResponseEntity.ok(movieService.save(request.toCommand(user.id)))
+    }
+
+    @DeleteMapping("/{movieId}")
+    @PreAuthorize("hasRole('ROLE_BASIC')")
+    @Operation(summary = "Delete Recommended Movie")
+    fun delete(
+        @AuthenticationPrincipal user: User,
+        @PathVariable movieId: Long
     ): ResponseEntity<Any> {
-        movieService.save(request.toCommand(user.id))
+        movieService.delete(movieId)
         return ResponseEntity.ok().build()
     }
 

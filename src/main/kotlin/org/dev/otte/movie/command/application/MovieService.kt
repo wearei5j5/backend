@@ -26,5 +26,10 @@ class MovieService(
                 command.releaseDate
             )
         )
+        return MovieSaveCommandResponse(movie.id)
+    }
+
+    fun delete(movieId: Long) {
+        movieRepository.deleteById(movieId)
     }
 }
