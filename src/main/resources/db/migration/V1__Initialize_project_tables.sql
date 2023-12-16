@@ -78,6 +78,6 @@ create table user
     social_provider   varchar(255),
     social_uid        varchar(255),
     state             varchar(255),
-    profile_image_url varchar(255)
-        primary key (id)
+    profile_image_url varchar(255),
+    primary key (id)
 );
