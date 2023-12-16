@@ -1,6 +1,7 @@
 package org.dev.otte.movie.command.application
 
 import org.dev.otte.movie.command.application.dto.MovieSaveCommand
+import org.dev.otte.movie.command.application.dto.MovieSaveCommandResponse
 import org.dev.otte.movie.command.domain.Movie
 import org.dev.otte.movie.command.domain.MovieRepository
 import org.dev.otte.user.command.domain.UserRepository
@@ -14,9 +15,9 @@ class MovieService(
     private val userRepository: UserRepository,
     private val movieRepository: MovieRepository
 ) {
-    fun save(command: MovieSaveCommand) {
+    fun save(command: MovieSaveCommand): MovieSaveCommandResponse {
         val user = userRepository.getOrThrow(command.userId)
-        movieRepository.save(
+        val movie = movieRepository.save(
             Movie(
                 user,
                 command.movieName,
