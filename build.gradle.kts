@@ -46,6 +46,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:${Version.JJWT}")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-mysql")
 }
 
 tasks.withType<KotlinCompile> {
