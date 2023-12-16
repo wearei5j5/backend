@@ -15,7 +15,8 @@ class UserQueryDao(
         return UserQueryResponse(
             user.name,
             user.age,
-            user.ottList
+            user.ottList,
+            user.profileImageUrl
         )
     }
 }
