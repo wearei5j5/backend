@@ -29,8 +29,6 @@ class User(
     var age: Int = 0
         protected set
 
-
-
     @Column
     @Convert(converter = OttConverter::class)
     var ottList: List<Ott> = emptyList()

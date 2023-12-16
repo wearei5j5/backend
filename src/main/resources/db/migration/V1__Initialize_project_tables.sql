@@ -68,15 +68,16 @@ create table static_config
 );
 create table user
 (
-    age             integer,
-    created_at      timestamp(6),
-    id              bigint not null auto_increment,
-    updated_at      timestamp(6),
-    name            varchar(255),
-    ott_list        varchar(255),
-    role            varchar(255),
-    social_provider varchar(255),
-    social_uid      varchar(255),
-    state           varchar(255),
-    primary key (id)
+    age               integer,
+    created_at        timestamp(6),
+    id                bigint not null auto_increment,
+    updated_at        timestamp(6),
+    name              varchar(255),
+    ott_list          varchar(255),
+    role              varchar(255),
+    social_provider   varchar(255),
+    social_uid        varchar(255),
+    state             varchar(255),
+    profile_image_url varchar(255)
+        primary key (id)
 );
