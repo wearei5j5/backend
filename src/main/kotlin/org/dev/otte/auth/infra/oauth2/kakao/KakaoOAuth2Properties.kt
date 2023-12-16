@@ -7,5 +7,5 @@ data class KakaoOAuth2Properties(
     val clientId: String,
     val clientSecret: String,
     val redirectUri: String,
-    val scope: String
+    val scope: Set<String>
 )

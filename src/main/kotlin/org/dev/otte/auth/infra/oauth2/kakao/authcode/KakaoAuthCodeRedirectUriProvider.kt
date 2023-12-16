@@ -19,7 +19,7 @@ class KakaoAuthCodeRedirectUriProvider(
             .queryParam("response_type", "code")
             .queryParam("client_id", properties.clientId)
             .queryParam("redirect_uri", properties.redirectUri)
-            .queryParam("scope", properties.scope)
+            .queryParam("scope", properties.scope.joinToString(","))
             .queryParam("state", state)
             .toUriString()
     }

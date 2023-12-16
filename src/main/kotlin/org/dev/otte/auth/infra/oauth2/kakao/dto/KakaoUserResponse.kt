@@ -14,13 +14,14 @@ data class KakaoUserResponse(
     val kakaoAccount: KakaoAccount,
 ) {
     fun toOAuth2UserData(): OAuth2UserData {
-        return OAuth2UserData(SocialProvider.KAKAO, id.toString())
+        return OAuth2UserData(SocialProvider.KAKAO, id.toString(), properties.profileImage)
     }
 }
 
 @JsonNaming(value = SnakeCaseStrategy::class)
 data class KakaoUserProperties(
-    val nickname: String
+    val nickname: String,
+    val profileImage: String?
 )
 
 @JsonNaming(value = SnakeCaseStrategy::class)

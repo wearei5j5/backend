@@ -33,7 +33,7 @@ class OAuth2Service(
     }
 
     private fun createUser(data: OAuth2UserData): User {
-        return userRepository.save(User(data.socialUid, data.socialProvider))
+        return userRepository.save(User(data.socialUid, data.socialProvider, data.profileImageUrl))
     }
 
     private fun tokenResponse(user: User): TokenResponse {
