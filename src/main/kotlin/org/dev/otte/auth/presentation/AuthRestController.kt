@@ -21,13 +21,13 @@ class AuthRestController(
     private val authService: AuthService
 ) {
     @PostMapping("/refresh")
-    @Operation(summary = "")
+    @Operation(summary = "Get access-token through refresh-token")
     fun generateTokenByRefreshToken(@RequestBody request: TokenRefreshRequest): ResponseEntity<DataResult<TokenResponse>> {
         return ResponseEntity.ok(DataResult(authService.generateTokenByRefreshToken(request.refreshToken)))
     }
 
     @PostMapping("/logout")
-    @Operation(summary = "")
+    @Operation(summary = "Delete refresh-token")
     fun logout(@AuthenticationPrincipal user: User): ResponseEntity<Any> {
         authService.logout(user.id)
         return ResponseEntity.ok().build()

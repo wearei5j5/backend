@@ -1,10 +1,7 @@
 package org.dev.otte.user.command.domain
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
+import jakarta.persistence.*
 import jakarta.persistence.EnumType.STRING
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Table
 import org.dev.otte.common.domain.BaseEntity
 import org.dev.otte.user.command.domain.UserState.VALID
 import org.springframework.security.core.GrantedAuthority
@@ -22,6 +19,19 @@ class User(
 ) : BaseEntity() {
 
     @Column
+    var name: String = ""
+        protected set
+
+    @Column
+    var age: Int = 0
+        protected set
+
+    @Column
+    @Convert(converter = OttConverter::class)
+    var ottList: List<Ott> = emptyList()
+        protected set
+
+    @Column
     @Enumerated(STRING)
     val state: UserState = VALID
 
@@ -36,4 +46,13 @@ class User(
         // TODO: 정보 제거
     }
 
+    fun update(
+        name: String,
+        age: Int,
+        ottList: List<Ott>
+    ) {
+        this.name = name
+        this.age = age
+        this.ottList = ottList
+    }
 }
