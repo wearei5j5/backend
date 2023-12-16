@@ -2,10 +2,10 @@ create table clova_studio_engine_setting
 (
     include_ai_filters boolean,
     include_tokens     boolean,
-    max_tokens         integer,
+    max_tokens         int,
     repeat_penalty     float(53),
     temperature        float(53),
-    topk               integer,
+    topk               int,
     topp               float(53),
     id                 bigint not null auto_increment,
     text               varchar(2000),
@@ -68,7 +68,7 @@ create table static_config
 );
 create table user
 (
-    age               integer,
+    age               int,
     created_at        timestamp(6),
     id                bigint not null auto_increment,
     updated_at        timestamp(6),
