@@ -13,7 +13,7 @@ class User(
     @Column
     val socialUid: String,
 
-    @Column
+    @Column(columnDefinition = "varchar(50)")
     @Enumerated(STRING)
     val socialProvider: SocialProvider,
 ) : BaseEntity() {
@@ -31,11 +31,11 @@ class User(
     var ottList: List<Ott> = emptyList()
         protected set
 
-    @Column
+    @Column(columnDefinition = "varchar(50)")
     @Enumerated(STRING)
     val state: UserState = VALID
 
-    @Column
+    @Column(columnDefinition = "varchar(50)")
     @Enumerated(STRING)
     val role: Role = Role.BASIC
 
