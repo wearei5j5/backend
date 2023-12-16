@@ -27,8 +27,8 @@ class OttConverter : AttributeConverter<List<Ott>, String> {
         return attribute.joinToString(",") { it.name }
     }
 
-    override fun convertToEntityAttribute(dbData: String): List<Ott> {
-        if (dbData.isEmpty()) {
+    override fun convertToEntityAttribute(dbData: String?): List<Ott> {
+        if (dbData.isNullOrEmpty()) {
             return emptyList()
         }
         return dbData.split(",").map { Ott.of(it) }
