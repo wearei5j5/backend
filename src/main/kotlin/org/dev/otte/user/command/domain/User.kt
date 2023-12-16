@@ -16,6 +16,9 @@ class User(
     @Column(columnDefinition = "varchar(50)")
     @Enumerated(STRING)
     val socialProvider: SocialProvider,
+
+    @Column
+    var profileImageUrl: String? = null
 ) : BaseEntity() {
 
     @Column
@@ -25,6 +28,8 @@ class User(
     @Column
     var age: Int = 0
         protected set
+
+
 
     @Column
     @Convert(converter = OttConverter::class)
