@@ -46,7 +46,7 @@ class MovieRecommendQueryService(
         }
 
         while (removeWhitespaceMovieNameSet.size < 3) {
-            Thread.sleep(500)
+            Thread.sleep(700)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
 
 
