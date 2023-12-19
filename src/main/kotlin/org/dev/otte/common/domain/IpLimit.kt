@@ -6,8 +6,17 @@ import jakarta.persistence.Entity
 @Entity
 class IpLimit(
     @Column
-    val ip: String?
+    val ip: String
 ) : BaseEntity() {
+
+    @Column
+    var totalCallCount: Int = 0
+        protected set
+
+    @Column
+    var remain: Int = 3
+        protected set
+
     fun call() {
         remain--
     }
@@ -19,8 +28,4 @@ class IpLimit(
     fun isRunOut(): Boolean {
         return remain < 1
     }
-
-    var totalCallCount: Int = 0
-
-    var remain: Int = 3
 }
