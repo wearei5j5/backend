@@ -2,8 +2,10 @@ package org.dev.otte.common.domain
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "ip_limit")
 class IpLimit(
     @Column
     val ip: String

@@ -28,6 +28,7 @@ class MovieRecommendQueryService(
     fun recommend(
         condition: MovieRecommendCondition
     ): List<MovieRecommendQueryResponse> {
+        return emptyList()
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
         val movieRecommendRequest =
             engineSetting.toRequest(condition.ottList.joinToString(","), condition.feeling, condition.situation)
