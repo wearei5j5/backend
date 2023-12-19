@@ -44,14 +44,11 @@ class MovieRecommendQueryService(
         val removeWhitespaceUserMovieNames = userMovies.map { movie ->
             movie.movieName.filterNot { name -> name.isWhitespace() }
         }
-
         while (removeWhitespaceMovieNameSet.size < 3) {
-            Thread.sleep(700)
+            Thread.sleep(1000)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
 
-
             val removeWhitespaceMovieName = movieRecommendQueryResponse.movieName.filterNot { it.isWhitespace() }
-
 
             if (!removeWhitespaceMovieNameSet.contains(removeWhitespaceMovieName)) {
                 if (removeWhitespaceUserMovieNames.contains(removeWhitespaceMovieName)) {
@@ -62,7 +59,6 @@ class MovieRecommendQueryService(
                 publisher.publishEvent(MovieRecommendedEvent(movieRecommendQueryResponse))
             }
         }
-
 
         return movieRecommendQueryResponseList.toList()
     }
