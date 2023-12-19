@@ -2,6 +2,7 @@ package org.dev.otte.movie.presentation
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.dev.otte.common.annotation.LimitRequest
 import org.dev.otte.common.presentation.dto.DataResult
 import org.dev.otte.common.security.AuthenticationFacade
@@ -14,7 +15,6 @@ import org.dev.otte.movie.query.MovieRecommendQueryService
 import org.dev.otte.movie.query.dto.MovieQueryResponse
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
 import org.dev.otte.user.command.domain.User
-import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -29,10 +29,10 @@ class MovieRestController(
     private val movieQueryService: MovieQueryService,
     private val facade: AuthenticationFacade
 ) {
-    @GetMapping("/recommended")
+    @PostMapping("/recommended")
     @LimitRequest
     @Operation(summary = "Find Recommended Movie")
-    fun recommend(@ParameterObject request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
+    fun recommend(@RequestBody @Valid request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
         val response = movieRecommendQueryService.recommend(request.toCondition(facade.getUserIdOrNull()))
         return ResponseEntity.ok(DataResult(response))
     }
