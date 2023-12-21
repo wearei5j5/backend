@@ -4,6 +4,8 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 
+private const val DAILY_CALL_LIMIT_COUNT = 3
+
 @Entity
 @Table(name = "ip_limit")
 class IpLimit(
@@ -16,7 +18,7 @@ class IpLimit(
         protected set
 
     @Column
-    var remain: Int = 3
+    var remain: Int = DAILY_CALL_LIMIT_COUNT
         protected set
 
     fun call() {
@@ -29,5 +31,9 @@ class IpLimit(
 
     fun isRunOut(): Boolean {
         return remain < 1
+    }
+
+    fun reset() {
+        remain = DAILY_CALL_LIMIT_COUNT
     }
 }
