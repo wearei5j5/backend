@@ -36,4 +36,8 @@ class IpLimit(
     fun reset() {
         remain = DAILY_CALL_LIMIT_COUNT
     }
+
+    fun releaseLimit() {
+        remain = Int.MAX_VALUE
+    }
 }
