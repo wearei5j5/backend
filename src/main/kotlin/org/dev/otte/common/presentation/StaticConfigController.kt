@@ -2,8 +2,10 @@ package org.dev.otte.common.presentation
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import org.dev.otte.common.application.StaticConfigService
 import org.dev.otte.common.presentation.dto.ClientBaseUrlRequest
+import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,4 +24,18 @@ class StaticConfigController(
         staticConfigService.changeClientBaseUrl(request.url)
         return ResponseEntity.ok().build()
     }
+
+    @Profile("!product")
+    @PostMapping("/release/iplimit")
+    @Operation(summary = "내 IP 기준 영화추천 리미트 해제")
+    fun releaseIplimit(request: HttpServletRequest): ResponseEntity<Any> {
+        val ip = getRequestIpFrom(request)
+        staticConfigService.releaseIplimit(ip)
+        return ResponseEntity.ok().build()
+    }
+
+    private fun getRequestIpFrom(request: HttpServletRequest): String =
+        request.getHeader("X-Forwarded-For")
+            ?.let { it.split(",")[0].trim() }
+            ?: request.remoteAddr
 }

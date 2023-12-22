@@ -48,6 +48,8 @@ dependencies {
 
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
+
+    implementation("com.googlecode.json-simple:json-simple:1.1.1")
 }
 
 tasks.withType<KotlinCompile> {

@@ -7,6 +7,7 @@ import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
 import org.dev.otte.movie.infra.tmdb.dto.MovieResult
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
 import org.dev.otte.movie.query.dao.MovieQueryDao
+import org.dev.otte.movie.query.dao.RecommendedMovieLogQueryDao
 import org.dev.otte.movie.query.dto.MovieQueryResponse
 import org.dev.otte.movie.query.dto.MovieRecommendCondition
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
@@ -23,11 +24,23 @@ class MovieRecommendQueryService(
     private val clovaStudioEngineSettingDao: ClovaStudioEngineSettingDao,
     private val tmdbMovieSearchClient: TmdbMovieSearchClient,
     private val publisher: ApplicationEventPublisher,
-    private val movieQueryDao: MovieQueryDao
+    private val movieQueryDao: MovieQueryDao,
+    private val recommendedMovieLogQueryDao: RecommendedMovieLogQueryDao
 ) {
     fun recommend(
         condition: MovieRecommendCondition
     ): List<MovieRecommendQueryResponse> {
+        return recommendedMovieLogQueryDao.findRandomThreeRecommendedMovie()
+            .map {
+                MovieRecommendQueryResponse(
+                    it.movieName,
+                    it.keywords
+                ).apply {
+                    this.posterImageUrl = it.posterImageUrl
+                    this.releaseDate = it.releaseDate
+                }
+            }
+
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
         val movieRecommendRequest =
             engineSetting.toRequest(condition.ottList.joinToString(","), condition.feeling, condition.situation)
@@ -44,14 +57,11 @@ class MovieRecommendQueryService(
         val removeWhitespaceUserMovieNames = userMovies.map { movie ->
             movie.movieName.filterNot { name -> name.isWhitespace() }
         }
-
         while (removeWhitespaceMovieNameSet.size < 3) {
-            Thread.sleep(700)
+            Thread.sleep(1000)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
 
-
             val removeWhitespaceMovieName = movieRecommendQueryResponse.movieName.filterNot { it.isWhitespace() }
-
 
             if (!removeWhitespaceMovieNameSet.contains(removeWhitespaceMovieName)) {
                 if (removeWhitespaceUserMovieNames.contains(removeWhitespaceMovieName)) {
@@ -62,7 +72,6 @@ class MovieRecommendQueryService(
                 publisher.publishEvent(MovieRecommendedEvent(movieRecommendQueryResponse))
             }
         }
-
 
         return movieRecommendQueryResponseList.toList()
     }
