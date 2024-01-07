@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MovieQueryDaoSupport : JpaRepository<Movie, Long> {
     fun findAllByUserId(userId: Long): List<Movie>
+    fun findAllByFolderIdIn(folderIds: Collection<Long>): List<Movie>
 }
