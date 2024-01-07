@@ -16,7 +16,7 @@ class FolderQueryDao(
             .findAllByFolderIdIn(folders.map { it.id })
             .groupBy { it.folderId }
         return folders.map {
-            FolderQueryResponse(it, movieGroup.getValue(it.id))
+            FolderQueryResponse(it, movieGroup[(it.id)] ?: emptyList())
         }
     }
 }
