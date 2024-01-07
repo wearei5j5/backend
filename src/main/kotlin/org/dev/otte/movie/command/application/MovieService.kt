@@ -6,6 +6,7 @@ import org.dev.otte.movie.command.domain.Movie
 import org.dev.otte.movie.command.domain.MovieRepository
 import org.dev.otte.user.command.domain.UserRepository
 import org.dev.otte.user.command.domain.getOrThrow
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -31,5 +32,10 @@ class MovieService(
 
     fun delete(movieId: Long) {
         movieRepository.deleteById(movieId)
+    }
+
+    fun foldering(movieId: Long, folderId: Long) {
+        val movie = movieRepository.findByIdOrNull(movieId) ?: throw IllegalArgumentException()
+        movie.foldering(folderId)
     }
 }

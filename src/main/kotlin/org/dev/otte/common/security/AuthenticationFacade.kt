@@ -10,4 +10,9 @@ class AuthenticationFacade {
         val user = SecurityContextHolder.getContext().authentication.principal as? User?
         return user?.id
     }
+
+    fun getUserId(): Long {
+        val user = SecurityContextHolder.getContext().authentication.principal as User
+        return user.id
+    }
 }

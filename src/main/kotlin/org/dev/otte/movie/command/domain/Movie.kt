@@ -24,4 +24,11 @@ class Movie(
 
     @Column
     val releaseDate: String?
-) : BaseEntity()
+) : BaseEntity() {
+    fun foldering(folderId: Long) {
+        this.folderId = folderId
+    }
+
+    @Column
+    var folderId: Long? = null
+}
