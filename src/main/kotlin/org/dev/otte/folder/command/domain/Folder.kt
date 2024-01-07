@@ -12,5 +12,9 @@ class Folder(
     val userId: Long,
 
     @Column(name = "name")
-    val name: String
-) : BaseEntity()
+    var name: String
+) : BaseEntity() {
+    fun update(name: String) {
+        this.name = name
+    }
+}
