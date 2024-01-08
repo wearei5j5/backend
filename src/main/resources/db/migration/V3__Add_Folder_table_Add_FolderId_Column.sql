@@ -9,4 +9,4 @@ create table folder
 );
 
 alter table movie
-    add folderId bigint null;
+    add folder_id bigint null;
