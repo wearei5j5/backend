@@ -7,7 +7,6 @@ import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
 import org.dev.otte.movie.infra.tmdb.dto.MovieResult
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
 import org.dev.otte.movie.query.dao.MovieQueryDao
-import org.dev.otte.movie.query.dao.RecommendedMovieLogQueryDao
 import org.dev.otte.movie.query.dto.MovieQueryResponse
 import org.dev.otte.movie.query.dto.MovieRecommendCondition
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
@@ -25,64 +24,65 @@ class MovieRecommendQueryService(
     private val tmdbMovieSearchClient: TmdbMovieSearchClient,
     private val publisher: ApplicationEventPublisher,
     private val movieQueryDao: MovieQueryDao,
-    private val recommendedMovieLogQueryDao: RecommendedMovieLogQueryDao
 ) {
     fun recommend(
         condition: MovieRecommendCondition
     ): List<MovieRecommendQueryResponse> {
-        return recommendedMovieLogQueryDao.findRandomThreeRecommendedMovie()
-            .map {
-                MovieRecommendQueryResponse(
-                    it.movieName,
-                    it.keywords
-                ).apply {
-                    this.posterImageUrl = it.posterImageUrl
-                    this.releaseDate = it.releaseDate
-                }
-            }
-
         val engineSetting = clovaStudioEngineSettingDao.findClovaStudioEngineSetting()
         val movieRecommendRequest =
             engineSetting.toRequest(condition.ottList.joinToString(","), condition.feeling, condition.situation)
+        val clovaAlreadyRecommendedMovieSet = mutableSetOf<String>()
+        val userAlreadyBookmarkedMovieNames = getRemoveWhitespaceUserMovieNames(condition.userId)
 
-        val removeWhitespaceMovieNameSet = mutableSetOf<String>()
-        val movieRecommendQueryResponseList: MutableList<MovieRecommendQueryResponse> = mutableListOf()
+        val result = mutableListOf<MovieRecommendQueryResponse>()
 
-        var userMovies: List<MovieQueryResponse> = emptyList()
-
-        if (condition.userId != null) {
-            userMovies = movieQueryDao.findAll(condition.userId)
-        }
-
-        val removeWhitespaceUserMovieNames = userMovies.map { movie ->
-            movie.movieName.filterNot { name -> name.isWhitespace() }
-        }
-        while (removeWhitespaceMovieNameSet.size < 3) {
+        while (clovaAlreadyRecommendedMovieSet.size < 3) {
             Thread.sleep(1000)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
-
             val removeWhitespaceMovieName = movieRecommendQueryResponse.movieName.filterNot { it.isWhitespace() }
-
-            if (!removeWhitespaceMovieNameSet.contains(removeWhitespaceMovieName)) {
-                if (removeWhitespaceUserMovieNames.contains(removeWhitespaceMovieName)) {
+            if (!clovaAlreadyRecommendedMovieSet.contains(removeWhitespaceMovieName)) {
+                if (userAlreadyBookmarkedMovieNames.contains(removeWhitespaceMovieName)) {
                     movieRecommendQueryResponse.isCollected = true
                 }
-                removeWhitespaceMovieNameSet.add(removeWhitespaceMovieName)
-                movieRecommendQueryResponseList.add(movieRecommendQueryResponse)
+                clovaAlreadyRecommendedMovieSet.add(removeWhitespaceMovieName)
+                result.add(movieRecommendQueryResponse)
                 publisher.publishEvent(MovieRecommendedEvent(movieRecommendQueryResponse))
             }
         }
+        return result.toList()
+    }
 
-        return movieRecommendQueryResponseList.toList()
+    private fun getRemoveWhitespaceUserMovieNames(userId: Long?): List<String> {
+        val userMovies = mutableListOf<MovieQueryResponse>()
+
+        if (userId != null) {
+            userMovies.addAll(movieQueryDao.findAll(userId))
+        }
+        return userMovies.map { movie ->
+            movie.movieName.filterNot { name -> name.isWhitespace() }
+        }
     }
 
     private fun movieRecommendQueryResponse(movieRecommendRequest: ClovaStudioMovieRecommendRequest): MovieRecommendQueryResponse {
-        val rawRecommendResult =
-            clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
-        val movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
-            ?: throw IllegalArgumentException("i5j5 does not operate normally.")
-        val firstMovieInSearchResults = getFirstMovieInSearchResults(movieRecommendQueryResponse.movieName)
-        return movieRecommendQueryResponse.apply {
+        lateinit var movieRecommendQueryResponse: MovieRecommendQueryResponse
+        var movieFetchRetryCount = 0
+        while (movieFetchRetryCount < 3) {
+            val rawRecommendResult =
+                clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
+            movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
+                ?: throw IllegalArgumentException("i5j5 does not operate normally.")
+            addPosterImageUrl(movieRecommendQueryResponse)
+            if (movieRecommendQueryResponse.posterImageUrl != null) {
+                break
+            }
+            movieFetchRetryCount++
+        }
+        return movieRecommendQueryResponse
+    }
+
+    private fun addPosterImageUrl(response: MovieRecommendQueryResponse) {
+        val firstMovieInSearchResults = getFirstMovieInSearchResults(response.movieName)
+        response.apply {
             posterImageUrl = getPosterImageUrl(firstMovieInSearchResults?.posterPath)
             releaseDate = firstMovieInSearchResults?.releaseDate
         }
