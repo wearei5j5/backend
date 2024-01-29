@@ -7,7 +7,6 @@ import org.dev.otte.movie.infra.tmdb.client.TmdbMovieSearchClient
 import org.dev.otte.movie.infra.tmdb.dto.MovieResult
 import org.dev.otte.movie.query.dao.ClovaStudioEngineSettingDao
 import org.dev.otte.movie.query.dao.MovieQueryDao
-import org.dev.otte.movie.query.dao.RecommendedMovieLogQueryDao
 import org.dev.otte.movie.query.dto.MovieQueryResponse
 import org.dev.otte.movie.query.dto.MovieRecommendCondition
 import org.dev.otte.movie.query.dto.MovieRecommendQueryResponse
@@ -41,7 +40,6 @@ class MovieRecommendQueryService(
             Thread.sleep(1000)
             val movieRecommendQueryResponse = movieRecommendQueryResponse(movieRecommendRequest)
             val removeWhitespaceMovieName = movieRecommendQueryResponse.movieName.filterNot { it.isWhitespace() }
-
             if (!clovaAlreadyRecommendedMovieSet.contains(removeWhitespaceMovieName)) {
                 if (userAlreadyBookmarkedMovieNames.contains(removeWhitespaceMovieName)) {
                     movieRecommendQueryResponse.isCollected = true
@@ -66,12 +64,25 @@ class MovieRecommendQueryService(
     }
 
     private fun movieRecommendQueryResponse(movieRecommendRequest: ClovaStudioMovieRecommendRequest): MovieRecommendQueryResponse {
-        val rawRecommendResult =
-            clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
-        val movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
-            ?: throw IllegalArgumentException("i5j5 does not operate normally.")
-        val firstMovieInSearchResults = getFirstMovieInSearchResults(movieRecommendQueryResponse.movieName)
-        return movieRecommendQueryResponse.apply {
+        lateinit var movieRecommendQueryResponse: MovieRecommendQueryResponse
+        var movieFetchRetryCount = 0
+        while (movieFetchRetryCount < 3) {
+            val rawRecommendResult =
+                clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
+            movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
+                ?: throw IllegalArgumentException("i5j5 does not operate normally.")
+            addPosterImageUrl(movieRecommendQueryResponse)
+            if (movieRecommendQueryResponse.posterImageUrl != null) {
+                break
+            }
+            movieFetchRetryCount++
+        }
+        return movieRecommendQueryResponse
+    }
+
+    private fun addPosterImageUrl(response: MovieRecommendQueryResponse) {
+        val firstMovieInSearchResults = getFirstMovieInSearchResults(response.movieName)
+        response.apply {
             posterImageUrl = getPosterImageUrl(firstMovieInSearchResults?.posterPath)
             releaseDate = firstMovieInSearchResults?.releaseDate
         }
