@@ -15,7 +15,10 @@ data class MovieRecommendRequest(
     val feeling: String,
     @Schema(description = "상황", example = "기분좋게 해줄 영화를 찾고 있어")
     @field:Size(min = 1, max = 100)
-    val situation: String
+    val situation: String,
+    @Schema(description = "장르")
+    @field:Size(min = 1, max = 100)
+    val genre: String
 ) {
     fun toCondition(userId: Long?): MovieRecommendCondition {
         if (Ott.NONE in ottList) {

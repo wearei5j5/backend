@@ -46,6 +46,36 @@ class DataInitializer(
         staticConfigRepository.save(StaticConfig("http://localhost:3000"))
     }
 
-    private fun getPrompt() =
-        "OTT목록, 기분, 상황을 입력하면 기분과 상황에 적합한 영화를 OTT목록에서 찾은 후 영화, 키워드를 추천해드립니다.\n\nOTT목록: netflix,disneyplus,watcha\n기분: 꿀꿀함\n상황: 상사한테 혼났어\n영화: 내가 사랑했던 모든 남자들에게\n키워드: 달콤함, 로맨스, 성장\n###\nOTT목록: netflix,disneyplus,watcha\n기분: 꿀꿀함\n상황: 상사한테 혼났어\n영화: 프린세스 다이어리\n키워드: 훈훈함, 코미디, 기분 좋은\n###\nOTT목록: netflix,watcha\n기분: 지루함\n상황: 주말에 한가해서 따분함\n영화: 이터널 선샤인\n키워드: 시사점, 로맨스, 독특한 서사\n###\nOTT목록: netflix,coupangplay\n기분: 심심함\n상황: 공포영화로 스릴을 즐기고 싶어\n영화: 침묵\n키워드: 심리적 공포, 미스터리, 드라마\n###\n"
+    private fun getPrompt()=
+        "OTT목록, 기분, 상황, 장르를 입력하면 기분과 상황 장르가 모두 적합한 영화를 OTT목록에서 찾은 후 영화, 키워드를 추천해드립니다.\n" +
+                "\n" +
+                "\n" +
+                "OTT목록: netflix,disneyplus,watcha\n" +
+                "기분: 꿀꿀함\n" +
+                "상황: 상사한테 혼났어\n" +
+                "장르: 로맨스를 보고싶어\n" +
+                "영화: 내가 사랑했던 모든 남자들에게\n" +
+                "키워드: 달콤함, 로맨스, 성장\n" +
+                "###\n" +
+                "OTT목록: netflix\n" +
+                "기분: 따분함\n" +
+                "상황: 회사일로 지쳐있음\n" +
+                "장르: 액션\n" +
+                "영화: 존윅3\n" +
+                "키워드: 통쾌함, 시원함, 스트레스 해소\n" +
+                "###\n" +
+                "OTT목록: netflix,watcha\n" +
+                "기분: 지루함\n" +
+                "상황: 주말에 한가해서 따분함\n" +
+                "장르: 로맨스\n" +
+                "영화: 이터널 선샤인\n" +
+                "키워드: 시사점, 로맨스, 독특한 서사\n" +
+                "###\n" +
+                "OTT목록: netflix,coupangplay\n" +
+                "기분: 심심함\n" +
+                "상황: 공포영화로 스릴을 즐기고 싶어\n" +
+                "장르: 공포\n" +
+                "영화: 침묵\n" +
+                "키워드: 심리적 공포, 미스터리, 드라마\n" +
+                "###\n"
 }
