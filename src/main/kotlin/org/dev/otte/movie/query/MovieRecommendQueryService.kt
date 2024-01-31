@@ -67,6 +67,7 @@ class MovieRecommendQueryService(
         lateinit var movieRecommendQueryResponse: MovieRecommendQueryResponse
         var movieFetchRetryCount = 0
         while (movieFetchRetryCount < 3) {
+            Thread.sleep(1000)
             val rawRecommendResult =
                 clovaStudioMovieRecommendClient.fetchMovieRecommend(movieRecommendRequest).result.outputText
             movieRecommendQueryResponse = parseMovieRecommendationString(rawRecommendResult)
