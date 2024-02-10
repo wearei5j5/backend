@@ -29,7 +29,7 @@ class MovieRestController(
     private val facade: AuthenticationFacade,
 ) {
     @PostMapping("/recommended")
-    @LimitRequest
+//    @LimitRequest
     @Operation(summary = "Find Recommended Movie")
     fun recommend(@RequestBody @Valid request: MovieRecommendRequest): ResponseEntity<DataResult<List<MovieRecommendQueryResponse>>> {
         val response = movieRecommendQueryService.recommend(request.toCondition(facade.getUserIdOrNull()))
