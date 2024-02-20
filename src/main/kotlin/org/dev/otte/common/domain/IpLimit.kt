@@ -3,6 +3,7 @@ package org.dev.otte.common.domain
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
+import kotlin.math.max
 
 private const val DAILY_CALL_LIMIT_COUNT = 3
 
@@ -22,15 +23,12 @@ class IpLimit(
         protected set
 
     fun call() {
-        remain--
-    }
-
-    fun totalCountUp() {
         totalCallCount++
+        remain = max(remain - 1, 0)
     }
 
     fun isRunOut(): Boolean {
-        return remain < 1
+        return remain == 0
     }
 
     fun reset() {

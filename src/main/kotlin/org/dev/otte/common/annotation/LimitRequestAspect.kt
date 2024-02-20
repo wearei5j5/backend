@@ -21,9 +21,7 @@ class LimitRequestAspect(
         val requestIp = getRequestIpFrom(request)
         val ipLimit = ipLimitRepository.findByIp(requestIp)
             ?: IpLimit(requestIp)
-        ipLimit.totalCountUp()
         if (ipLimit.isRunOut()) {
-            ipLimitRepository.save(ipLimit)
             throw IllegalArgumentException("호출 횟수를 초과했습니다")
         }
         ipLimit.call()
